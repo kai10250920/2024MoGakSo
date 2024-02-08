@@ -1,5 +1,8 @@
 
-
+const mysql      = require('mysql');
+const dbconfig   = require('./db.js');
+const connection = mysql.createConnection(dbconfig)
+console.log("connect db")
 const express = require('express')
 // express라는 npm 모듈 요청
 const app = express()
@@ -30,8 +33,16 @@ app.post('/contactProc', (req, res) => {
   const phone=req.body.phone;
   const email=req.body.email;
   const memo= req.body.memo;
-  var a= `안녕하세요 ${name} ${phone} ${email} ${memo}`
-  res.send(a);
+
+  var sql= `insert into contact(name,phonenum,email,memo,regdate)
+  values('${name}','${phone}','${email}','${memo}',now() )`
+  connection.query(sql,function(err,result){
+    if (err) throw err;
+    console.log(`삽입성공`)
+    res.send(" <script> alert('문의등록'); location.href=`/`</script>")
+  })
+  // var a= `안녕하세요 ${name} ${phone} ${email} ${memo}`
+  // res.send(a);
 })
 app.get('/test', (req, res) => {
     res.send('<h1>test<h1>!')
